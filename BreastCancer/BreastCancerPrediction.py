@@ -183,12 +183,12 @@ grid.best_params_
 grid.best_estimator_
 
 
-# In[32]:
+# In[36]:
 
 
 # Predict the test data and plot the confusion matrix
 grid_predict = grid.predict(X_test_sc)
-cm = confusion_matrix(y_test, grid_predict)
+cm = confusion_matrix(y_test,grid_predict)
 sns.heatmap(cm, annot=True)
 
 
