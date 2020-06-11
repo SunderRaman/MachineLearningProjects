@@ -5,7 +5,7 @@
 
 # ## Data Understanding
 
-# In[3]:
+# In[1]:
 
 
 # Imports
@@ -18,7 +18,7 @@ from sklearn.linear_model import LinearRegression
 import os
 
 
-# In[6]:
+# In[2]:
 
 
 # Set the working directory & Read the data
@@ -26,26 +26,26 @@ os.chdir("C:\\Sunder\\DataScience\\MachineLearning\\Projects\\CarPricing")
 cars = pd.read_csv("CarPrice.csv")
 
 
-# In[7]:
+# In[3]:
 
 
 cars.head()
 
 
-# In[8]:
+# In[4]:
 
 
 print(cars.info())
 
 
-# In[10]:
+# In[5]:
 
 
 cars.isna().sum()
 # No null values or NA Values
 
 
-# In[18]:
+# In[6]:
 
 
 unique_values = cars.nunique()
@@ -54,28 +54,28 @@ print(unique_values)
 
 # ### Understand some of the variables data through plots and counts
 
-# In[23]:
+# In[7]:
 
 
 # symboling
 cars['symboling'].astype('category').value_counts()
 
 
-# In[24]:
+# In[8]:
 
 
 # Aspiration
 cars['aspiration'].astype('category').value_counts()
 
 
-# In[25]:
+# In[9]:
 
 
 # Drive Wheel
 cars['drivewheel'].astype('category').value_counts()
 
 
-# In[26]:
+# In[10]:
 
 
 # Wheel base
@@ -83,7 +83,7 @@ sns.distplot(cars['wheelbase'])
 plt.show()
 
 
-# In[27]:
+# In[11]:
 
 
 # Stroke
@@ -91,7 +91,7 @@ sns.distplot(cars['stroke'])
 plt.show()
 
 
-# In[28]:
+# In[12]:
 
 
 # Target variable (Price)
@@ -101,7 +101,7 @@ plt.show()
 
 # ### Data Exploration
 
-# In[30]:
+# In[13]:
 
 
 # Identify all the numeric variables as this would be key during linear regression
@@ -109,7 +109,7 @@ cars_numeric = cars.select_dtypes(include=['float64', 'int64'])
 cars_numeric.head()
 
 
-# In[31]:
+# In[14]:
 
 
 # dropping symboling and car_ID 
@@ -117,7 +117,7 @@ cars_numeric = cars_numeric.drop(['symboling', 'car_ID'], axis=1)
 cars_numeric.head()
 
 
-# In[32]:
+# In[15]:
 
 
 # Compute correlation annd plot
@@ -139,7 +139,7 @@ plt.show()
 
 # ## Data Cleaning
 
-# In[33]:
+# In[16]:
 
 
 # Converting symboling to categorical variable
@@ -155,7 +155,7 @@ cars.info()
 cars['CarName'][:10]
 
 
-# In[40]:
+# In[17]:
 
 
 # Extract the first token based on space
@@ -163,7 +163,7 @@ carnames = cars['CarName'].apply(lambda x: x.split(" ")[0])
 carnames[:20]
 
 
-# In[57]:
+# In[18]:
 
 
 # There are a few names which are separated by "-". Using Regular expressions
@@ -178,7 +178,7 @@ cars['car_company'].astype('category').value_counts().sort_index(ascending=True)
 
 # Some company names like toyota/Toyouta , nissan/Nissan are misspelled or multispelled in different cases. We need to merge them
 
-# In[53]:
+# In[19]:
 
 
 # Replacing misspelled carnames 
@@ -200,7 +200,7 @@ cars.loc[cars['car_company'] == "Nissan", 'car_company'] = 'nissan'
 cars.loc[cars['car_company'] == "maxda", 'car_company'] = 'mazda'
 
 
-# In[56]:
+# In[20]:
 
 
 cars['car_company'].astype('category').value_counts().sort_index()
@@ -215,7 +215,7 @@ cars = cars.drop('CarName', axis=1)
 
 # ## Data Preparation for Model Bulding
 
-# In[59]:
+# In[48]:
 
 
 X = cars.loc[:, ['symboling', 'fueltype', 'aspiration', 'doornumber',
@@ -228,14 +228,14 @@ X = cars.loc[:, ['symboling', 'fueltype', 'aspiration', 'doornumber',
 y = cars['price']
 
 
-# In[61]:
+# In[49]:
 
 
 cars_categorical = X.select_dtypes(include=['object'])
 cars_categorical
 
 
-# In[62]:
+# In[50]:
 
 
 # Convert the categorical values to columns
@@ -243,7 +243,7 @@ cars_dummies = pd.get_dummies(cars_categorical, drop_first=True)
 cars_dummies.head()
 
 
-# In[63]:
+# In[51]:
 
 
 # Drop the categorical columns and merge the dummies columns
@@ -251,7 +251,7 @@ X = X.drop(list(cars_categorical.columns), axis=1)
 X = pd.concat([X, cars_dummies], axis=1)
 
 
-# In[64]:
+# In[52]:
 
 
 # scaling the features
@@ -265,7 +265,7 @@ X.columns = cols
 X.columns
 
 
-# In[66]:
+# In[53]:
 
 
 # split into train and test
@@ -276,7 +276,7 @@ X_train, X_test, y_train, y_test = train_test_split(X, y,
                                                     test_size = 0.3, random_state=100)
 
 
-# In[67]:
+# In[27]:
 
 
 # Building the model initially with all the features
@@ -288,7 +288,7 @@ lm = LinearRegression()
 lm.fit(X_train, y_train)
 
 
-# In[68]:
+# In[28]:
 
 
 # Predict the dependent variable for the test values 
@@ -302,7 +302,7 @@ print(r2_score(y_true=y_test, y_pred=y_pred))
 
 # 1. RFE:- Select 15 features using RFE (Recursive Feature Elimination) 
 
-# In[69]:
+# In[29]:
 
 
 # RFE with 15 features
@@ -320,7 +320,7 @@ print(rfe_15.support_)
 print(rfe_15.ranking_)  
 
 
-# In[70]:
+# In[30]:
 
 
 # making predictions using rfe model (15 features)
@@ -330,7 +330,7 @@ y_pred = rfe_15.predict(X_test)
 print(r2_score(y_test, y_pred))
 
 
-# In[71]:
+# In[31]:
 
 
 # import statsmodels
@@ -347,7 +347,7 @@ X_train_rfe_15 = sm.add_constant(X_train_rfe_15)
 X_train_rfe_15.head()
 
 
-# In[72]:
+# In[32]:
 
 
 # fit the model with these 15 variables
@@ -355,7 +355,7 @@ lm_15 = sm.OLS(y_train, X_train_rfe_15).fit()
 print(lm_15.summary())
 
 
-# In[73]:
+# In[33]:
 
 
 # making predictions using rfe_15 sm model
@@ -371,7 +371,7 @@ X_test_rfe_15.info()
 y_pred = lm_15.predict(X_test_rfe_15)
 
 
-# In[74]:
+# In[34]:
 
 
 # r-squared
@@ -380,7 +380,7 @@ r2_score(y_test, y_pred)
 
 # ## Choosing the optimal number of features
 
-# In[78]:
+# In[35]:
 
 
 # Find the  optimal number of features. We shall be trying from 4 to 20 features
@@ -426,7 +426,7 @@ for n_features in range(4, 20):
     test_r2.append(r2_score(y_test, y_pred))
 
 
-# In[80]:
+# In[36]:
 
 
 # plotting adjusted_r2,r2,test_r2 against n_features
@@ -441,7 +441,7 @@ plt.show()
 
 # ### Final Model
 
-# In[88]:
+# In[54]:
 
 
 #We shall be going ahead with 12 features for the final model.
@@ -479,13 +479,13 @@ y_pred_12 = lm_12.predict(X_test_rfe_12)
 print(r2_score(y_test, y_pred_12))
 
 
-# In[89]:
+# In[55]:
 
 
 col_12
 
 
-# In[92]:
+# In[56]:
 
 
 # MultiCollinearity (12 columns)
@@ -498,7 +498,7 @@ plt.show()
 #  Use VIF (Variance Inflation Factor) to remove the multicollinear columns based on these 12 columns and 
 #  check, if it further improves the r2_score
 
-# In[95]:
+# In[40]:
 
 
 # Function to calculate VIF (Variance Inflation Factor)
@@ -524,19 +524,19 @@ def calculate_vif_(X, thresh=5.0):
     return X.iloc[:, variables]
 
 
-# In[97]:
+# In[41]:
 
 
 vif_based_columns = calculate_vif_(X.loc[:, list(col_12)])
 
 
-# In[98]:
+# In[42]:
 
 
 vif_based_columns
 
 
-# In[99]:
+# In[43]:
 
 
 # MultiCollinearity (9 Columns)
@@ -546,7 +546,7 @@ sns.heatmap(cors, annot=True)
 plt.show()
 
 
-# In[108]:
+# In[44]:
 
 
 vif_based_columns.columns
@@ -554,7 +554,7 @@ vif_based_columns.columns
 
 # ## Updated model (with 9 columns)
 
-# In[111]:
+# In[45]:
 
 
 # fitting the model with 9 variables
@@ -580,7 +580,51 @@ print(r2_score(y_test, y_pred_9))
 
 
 # Removal of the multicollinear columns did not improve the <b>r2_score</b>. hence, we can stick with the <b>12 columns </b> 
-# and the r2_score is <b> 0.9160335989800035 </b>
+# and the r2_score is <b> 0.9060374152228401 </b>
+
+# ## Final Model Evaluation
+#  - Error terms are normally distributed about the mean
+#  - The mean is quite close to zero
+#  - Variance of the error term is nearly constant
+
+# In[62]:
+
+
+c = [i for i in range(len(y_pred_12))]
+fig = plt.figure()
+plt.plot(c,y_test-y_pred_12, color="blue", linewidth=2.5, linestyle="-")
+fig.suptitle('Error Terms', fontsize=20)              # Plot heading 
+plt.xlabel('Index', fontsize=18)                      # X-label
+plt.ylabel('ytest-ypred', fontsize=16)                # Y-label
+plt.show()
+
+
+# In[63]:
+
+
+# Mean
+np.mean(y_test-y_pred_12)
+
+
+# In[66]:
+
+
+# Plot the error terms to understand the distribution.
+fig = plt.figure()
+sns.distplot((y_test-y_pred_12),bins=50)
+fig.suptitle('Error Terms', fontsize=20)                  # Plot heading 
+plt.xlabel('y_test-y_pred_12', fontsize=18)                  # X-label
+plt.ylabel('Index', fontsize=16)                          # Y-label
+plt.show()
+
+
+# In[67]:
+
+
+# Distribution of car's price
+sns.distplot(cars['price'],bins=50)
+plt.show()
+
 
 # In[ ]:
 
